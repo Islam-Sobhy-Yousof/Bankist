@@ -63,7 +63,9 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 const createMovement = function (mov, i, moveType) {
   const move = `<div class="movements__row">
-          <div class="movements__type movements__type--${moveType}">${i} ${moveType}</div>
+          <div class="movements__type movements__type--${moveType}">${
+    i + 1
+  } ${moveType}</div>
           <div class="movements__date">3 days ago</div>
           <div class="movements__value">${mov}€</div>
         </div>`;
@@ -81,6 +83,24 @@ const displayMovement = function (movements) {
   });
 };
 displayMovement(account1.movements);
+const calcDisplayBalance = function (movements) {
+  const totalBalance = movements.reduce((acc, mov) => acc + mov);
+  labelBalance.textContent = `${totalBalance} EUR`;
+};
+calcDisplayBalance(account1.movements);
+const calcDisplaySummary = function (movements) {
+  const incom = movements.reduce((acc, mov) => {
+    return (acc += mov > 0 ? mov : 0);
+  }, 0);
+  const outcome = movements.reduce((acc, mov, i) => {
+    return (acc += mov <= 0 ? Math.abs(mov) : 0);
+  }, 0);
+  //Display the values on the labels
+  labelSumIn.textContent = `${incom}€`;
+  labelSumOut.textContent = `${outcome}€`;
+  labelSumInterest.textContent = `${Math.round(incom / outcome)}€`;
+};
+calcDisplaySummary(account1.movements);
 const createUserNames = function (user) {
   return user
     .toLocaleLowerCase()
