@@ -85,20 +85,26 @@ const displayMovement = function (movements) {
 displayMovement(account1.movements);
 const calcDisplayBalance = function (movements) {
   const totalBalance = movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = `${totalBalance} EUR`;
+  labelBalance.textContent = `${totalBalance}💶`;
 };
 calcDisplayBalance(account1.movements);
 const calcDisplaySummary = function (movements) {
-  const incom = movements.reduce((acc, mov) => {
-    return (acc += mov > 0 ? mov : 0);
-  }, 0);
-  const outcome = movements.reduce((acc, mov, i) => {
-    return (acc += mov <= 0 ? Math.abs(mov) : 0);
-  }, 0);
+  const incom = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov);
+  const outcome = movements
+    .filter(mov => mov <= 0)
+    .reduce((acc, mov) => acc + mov);
   //Display the values on the labels
   labelSumIn.textContent = `${incom}€`;
-  labelSumOut.textContent = `${outcome}€`;
-  labelSumInterest.textContent = `${Math.round(incom / outcome)}€`;
+  labelSumOut.textContent = `${Math.abs(outcome)}€`;
+  const interestRate = 1.2 / 100;
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(mov => mov * interestRate)
+    .filter(mov => mov >= 1)
+    .reduce((acc, mov) => acc + mov);
+  labelSumInterest.textContent = `${interest}€`;
 };
 calcDisplaySummary(account1.movements);
 const createUserNames = function (user) {
