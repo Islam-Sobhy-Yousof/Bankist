@@ -73,8 +73,10 @@ const createMovement = function (mov, i, moveType) {
   containerMovements.appendChild(appendedChild);
 };
 const displayMovement = function (movements) {
+  //Clear the content of the movements container
+  containerMovements.innerHTML = '';
   movements.forEach(function (mov, i) {
-    const moveType = mov >= 0 ? 'deposit' : 'withdrawal';
+    const moveType = mov > 0 ? 'deposit' : 'withdrawal';
     createMovement(mov, i, moveType);
   });
 };
