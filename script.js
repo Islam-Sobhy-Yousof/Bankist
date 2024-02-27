@@ -32,7 +32,13 @@ const account4 = {
   interestRate: 1,
   pin: 4444,
 };
-const accounts = [account1, account2, account3, account4];
+const account5 = {
+  owner: 'Islam Sobhy',
+  movements: [987, 852, 951, 753, 357],
+  interestRate: 1,
+  pin: 5555,
+};
+const accounts = [account1, account2, account3, account4, account5];
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -85,8 +91,8 @@ const calcDisplayBalance = function (movements) {
   const totalBalance = movements.reduce((acc, mov) => acc + mov);
   labelBalance.textContent = `${totalBalance}💶`;
 };
-const calcDisplaySummary = function (movements) {
-  const incom = movements
+const calcDisplaySummary = function (account) {
+  const incom = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov);
   const outcome = movements
@@ -95,13 +101,13 @@ const calcDisplaySummary = function (movements) {
   //Display the values on the labels
   labelSumIn.textContent = `${incom}€`;
   labelSumOut.textContent = `${Math.abs(outcome)}€`;
-  const interestRate = 1.2 / 100;
-  const interest = movements
+  const interestRate = account.interestRate / 100;
+  const interest = account.movements
     .filter(mov => mov > 0)
     .map(mov => mov * interestRate)
     .filter(mov => mov >= 1)
     .reduce((acc, mov) => acc + mov);
-  labelSumInterest.textContent = `${interest}€`;
+  labelSumInterest.textContent = `${interest.toFixed(3)}€`;
 };
 const createUserNames = function (user) {
   return user
@@ -120,16 +126,19 @@ const login = function (event) {
   event.preventDefault();
   const userName = inputLoginUsername.value;
   const pin = parseInt(inputLoginPin.value);
-  if (userName && pin) {
-    const account = accounts.find(acc => {
-      return acc.userName === userName && acc.pin === pin;
-    });
-    if (account) {
-      displayMovement(account.movements);
-      calcDisplayBalance(account.movements);
-      calcDisplaySummary(account.movements);
-      containerApp.style.opacity = '1';
-    }
+  const account = accounts.find(acc => {
+    return acc.userName === userName && acc.pin === pin;
+  });
+  if (account) {
+    //make the two fields to lose thier foucs
+    inputLoginUsername.blur();
+    inputLoginPin.blur();
+    inputLoginUsername.value = inputLoginPin.value = '';
+    displayMovement(account.movements);
+    calcDisplayBalance(account.movements);
+    calcDisplaySummary(account);
+    containerApp.style.opacity = '1';
+    labelWelcome.textContent = `Welcom Back, ${account.owner.split(' ')[0]}🎉`;
   }
 };
 btnLogin.addEventListener('click', login);
