@@ -34,7 +34,7 @@ const account4 = {
 };
 const account5 = {
   owner: 'Islam Sobhy',
-  movements: [987, 852, 951, 753, 357],
+  movements: [987, 852, 951, 753, 357, -10],
   interestRate: 1,
   pin: 5555,
 };
@@ -74,10 +74,7 @@ const createMovement = function (mov, i, moveType) {
           <div class="movements__date">3 days ago</div>
           <div class="movements__value">${mov}€</div>
         </div>`;
-  const tmpContainer = document.createElement('div');
-  tmpContainer.innerHTML = move.trim();
-  const appendedChild = tmpContainer.firstElementChild;
-  containerMovements.appendChild(appendedChild);
+  containerMovements.insertAdjacentHTML('afterbegin', move);
 };
 const displayMovement = function (movements) {
   //Clear the content of the movements container
@@ -95,7 +92,7 @@ const calcDisplaySummary = function (account) {
   const incom = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov);
-  const outcome = movements
+  const outcome = account.movements
     .filter(mov => mov <= 0)
     .reduce((acc, mov) => acc + mov);
   //Display the values on the labels
@@ -122,6 +119,7 @@ const addUserNames = function () {
   );
 };
 addUserNames();
+let activeAcount = null;
 const login = function (event) {
   event.preventDefault();
   const userName = inputLoginUsername.value;
@@ -130,6 +128,8 @@ const login = function (event) {
     return acc.userName === userName && acc.pin === pin;
   });
   if (account) {
+    //assign this account to active account
+    activeAcount = account;
     //make the two fields to lose thier foucs
     inputLoginUsername.blur();
     inputLoginPin.blur();
@@ -142,6 +142,28 @@ const login = function (event) {
   }
 };
 btnLogin.addEventListener('click', login);
+const transferMoney = function (event) {
+  event.preventDefault();
+  const recieverAccount = inputTransferTo.value;
+  const moneyAmount = inputTransferAmount.value;
+  const accountToTransfere = accounts.find(
+    acc => acc.userName === recieverAccount
+  );
+  if (accountToTransfere) {
+    //transfere money to the reciever account
+    accountToTransfere.movements.push(parseInt(moneyAmount));
+    //add this withdrawal to the current account
+    activeAcount.movements.push(-parseInt(moneyAmount));
+    displayMovement(activeAcount.movements);
+    calcDisplayBalance(activeAcount.movements);
+    calcDisplaySummary(activeAcount);
+    //clear the input field and the foucs
+    inputTransferTo.value = inputTransferAmount.value = '';
+    inputTransferTo.blur();
+    inputTransferAmount.blur();
+  }
+};
+btnTransfer.addEventListener('click', transferMoney);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
