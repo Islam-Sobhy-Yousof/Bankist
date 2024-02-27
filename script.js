@@ -81,6 +81,21 @@ const displayMovement = function (movements) {
   });
 };
 displayMovement(account1.movements);
+const createUserNames = function (user) {
+  return user
+    .toLocaleLowerCase()
+    .split(' ')
+    .map(val => val.at(0))
+    .join('');
+};
+
+const addUserNames = function () {
+  accounts.forEach(
+    account => (account.userName = createUserNames(account.owner))
+  );
+};
+addUserNames();
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
