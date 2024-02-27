@@ -32,7 +32,6 @@ const account4 = {
   interestRate: 1,
   pin: 4444,
 };
-
 const accounts = [account1, account2, account3, account4];
 
 // Elements
@@ -82,12 +81,10 @@ const displayMovement = function (movements) {
     createMovement(mov, i, moveType);
   });
 };
-displayMovement(account1.movements);
 const calcDisplayBalance = function (movements) {
   const totalBalance = movements.reduce((acc, mov) => acc + mov);
   labelBalance.textContent = `${totalBalance}💶`;
 };
-calcDisplayBalance(account1.movements);
 const calcDisplaySummary = function (movements) {
   const incom = movements
     .filter(mov => mov > 0)
@@ -106,7 +103,6 @@ const calcDisplaySummary = function (movements) {
     .reduce((acc, mov) => acc + mov);
   labelSumInterest.textContent = `${interest}€`;
 };
-calcDisplaySummary(account1.movements);
 const createUserNames = function (user) {
   return user
     .toLocaleLowerCase()
@@ -114,14 +110,29 @@ const createUserNames = function (user) {
     .map(val => val.at(0))
     .join('');
 };
-
 const addUserNames = function () {
   accounts.forEach(
     account => (account.userName = createUserNames(account.owner))
   );
 };
 addUserNames();
-
+const login = function (event) {
+  event.preventDefault();
+  const userName = inputLoginUsername.value;
+  const pin = parseInt(inputLoginPin.value);
+  if (userName && pin) {
+    const account = accounts.find(acc => {
+      return acc.userName === userName && acc.pin === pin;
+    });
+    if (account) {
+      displayMovement(account.movements);
+      calcDisplayBalance(account.movements);
+      calcDisplaySummary(account.movements);
+      containerApp.style.opacity = '1';
+    }
+  }
+};
+btnLogin.addEventListener('click', login);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
