@@ -169,7 +169,21 @@ const transferMoney = function (event) {
   }
 };
 btnTransfer.addEventListener('click', transferMoney);
-
+const requestLone = function (event) {
+  event.preventDefault();
+  const loanAmount = parseInt(inputLoanAmount.value);
+  if (loanAmount > 0) {
+    const canTakeLoan = activeAcount.movements.some(
+      mov => mov >= loanAmount * (10 / 100)
+    );
+    if (canTakeLoan) {
+      activeAcount.movements.push(loanAmount);
+      updateUI(activeAcount);
+      inputLoanAmount.value = '';
+    }
+  }
+};
+btnLoan.addEventListener('click', requestLone);
 const closeAccount = function (event) {
   event.preventDefault();
   const activeUser = activeAcount.userName;
