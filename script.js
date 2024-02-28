@@ -175,7 +175,7 @@ const requestLone = function (event) {
   if (loanAmount > 0) {
     const canTakeLoan = activeAcount.movements.some(
       mov => mov >= loanAmount * (10 / 100)
-    );
+    ); 
     if (canTakeLoan) {
       activeAcount.movements.push(loanAmount);
       updateUI(activeAcount);
