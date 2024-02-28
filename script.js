@@ -175,7 +175,7 @@ const closeAccount = function (event) {
   const activeUser = activeAcount.userName;
   const activePin = activeAcount.pin;
   const inputUserName = inputCloseUsername.value;
-  const inputPin = parseInt(inputClosePin.value); 
+  const inputPin = parseInt(inputClosePin.value);
   //Empty the fields
   inputCloseUsername.value = inputClosePin.value = '';
   if (inputUserName === activeUser && inputPin === activePin) {
