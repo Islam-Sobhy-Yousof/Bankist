@@ -55,10 +55,11 @@ const createMovement = function (mov, i, moveType) {
         </div>`;
   containerMovements.insertAdjacentHTML('afterbegin', move);
 };
-const displayMovement = function (movements) {
+const displayMovement = function (movements,sort = false) {
   //Clear the content of the movements container
   containerMovements.innerHTML = '';
-  movements.forEach(function (mov, i) {
+  const movs = sort ? movements.slice().sort((a,b) => a - b):movements;
+  movs.forEach(function (mov, i) {
     const moveType = mov > 0 ? 'deposit' : 'withdrawal';
     createMovement(mov, i, moveType);
   });
@@ -193,15 +194,12 @@ const sortTransActions = function () {
   if (isSorted === true) {
     //the array is sorted make it back to orignal state
     isSorted = false;
-    activeAcount.movements = unsortedMovements;
-    console.log('movements are sorted');
+    displayMovement(activeAcount.movements);
   } else if (isSorted === false) {
     //the movements is not sorted Sort Them!
+    displayMovement(activeAcount.movements,true);
     isSorted = true;
-    activeAcount.movements = sortedMovements;
-    console.log('movements are not sorted');
   }
-  updateUI(activeAcount);
 };
 btnSort.addEventListener('click', sortTransActions);
 /////////////////////////////////////////////////
