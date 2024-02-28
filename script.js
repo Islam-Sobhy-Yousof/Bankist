@@ -84,9 +84,9 @@ const displayMovement = function (movements) {
     createMovement(mov, i, moveType);
   });
 };
-const calcDisplayBalance = function (movements) {
-  const totalBalance = movements.reduce((acc, mov) => acc + mov);
-  labelBalance.textContent = `${totalBalance}💶`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov);
+  labelBalance.textContent = `${acc.balance}💶`;
 };
 const calcDisplaySummary = function (account) {
   const incom = account.movements
@@ -113,12 +113,18 @@ const createUserNames = function (user) {
     .map(val => val.at(0))
     .join('');
 };
+
 const addUserNames = function () {
   accounts.forEach(
     account => (account.userName = createUserNames(account.owner))
   );
 };
 addUserNames();
+const updateUI = function (acc) {
+  displayMovement(acc.movements);
+  calcDisplayBalance(acc);
+  calcDisplaySummary(acc);
+};
 let activeAcount = null;
 const login = function (event) {
   event.preventDefault();
@@ -134,9 +140,7 @@ const login = function (event) {
     inputLoginUsername.blur();
     inputLoginPin.blur();
     inputLoginUsername.value = inputLoginPin.value = '';
-    displayMovement(account.movements);
-    calcDisplayBalance(account.movements);
-    calcDisplaySummary(account);
+    updateUI(activeAcount);
     containerApp.style.opacity = '1';
     labelWelcome.textContent = `Welcom Back, ${account.owner.split(' ')[0]}🎉`;
   }
@@ -145,18 +149,19 @@ btnLogin.addEventListener('click', login);
 const transferMoney = function (event) {
   event.preventDefault();
   const recieverAccount = inputTransferTo.value;
-  const moneyAmount = inputTransferAmount.value;
+  const moneyAmount = parseInt(inputTransferAmount.value);
   const accountToTransfere = accounts.find(
     acc => acc.userName === recieverAccount
   );
-  if (accountToTransfere) {
+  const isPositive = moneyAmount > 0;
+  const hasEnoughMoney = moneyAmount <= activeAcount.balance;
+  const sameAccount = accountToTransfere?.userName !== activeAcount.userName;
+  if (isPositive && hasEnoughMoney && accountToTransfere && sameAccount) {
     //transfere money to the reciever account
-    accountToTransfere.movements.push(parseInt(moneyAmount));
+    accountToTransfere.movements.push(moneyAmount);
     //add this withdrawal to the current account
-    activeAcount.movements.push(-parseInt(moneyAmount));
-    displayMovement(activeAcount.movements);
-    calcDisplayBalance(activeAcount.movements);
-    calcDisplaySummary(activeAcount);
+    activeAcount.movements.push(-moneyAmount);
+    updateUI(activeAcount);
     //clear the input field and the foucs
     inputTransferTo.value = inputTransferAmount.value = '';
     inputTransferTo.blur();
@@ -164,6 +169,7 @@ const transferMoney = function (event) {
   }
 };
 btnTransfer.addEventListener('click', transferMoney);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
