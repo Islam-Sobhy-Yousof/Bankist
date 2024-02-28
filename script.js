@@ -6,39 +6,18 @@
 
 // Data
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'Mohamed Sobhy',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
 };
-
 const account2 = {
-  owner: 'Jessica Davis',
-  movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-  interestRate: 1.5,
-  pin: 2222,
-};
-
-const account3 = {
-  owner: 'Steven Thomas Williams',
-  movements: [200, -200, 340, -300, -20, 50, 400, -460],
-  interestRate: 0.7,
-  pin: 3333,
-};
-
-const account4 = {
-  owner: 'Sarah Smith',
-  movements: [430, 1000, 700, 50, 90],
-  interestRate: 1,
-  pin: 4444,
-};
-const account5 = {
   owner: 'Islam Sobhy',
   movements: [987, 852, 951, 753, 357, -10],
   interestRate: 1,
-  pin: 5555,
+  pin: 2222,
 };
-const accounts = [account1, account2, account3, account4, account5];
+const accounts = [account1, account2];
 
 // Elements
 const labelWelcome = document.querySelector('.welcome');
@@ -126,6 +105,8 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 let activeAcount = null;
+let sortedMovements = null;
+let unsortedMovements = null;
 const login = function (event) {
   event.preventDefault();
   const userName = inputLoginUsername.value;
@@ -136,6 +117,10 @@ const login = function (event) {
   if (account) {
     //assign this account to active account
     activeAcount = account;
+    sortedMovements = activeAcount.movements
+      .map(mov => mov)
+      .sort((a, b) => a - b);
+    unsortedMovements = activeAcount.movements.map(mov => mov);
     //make the two fields to lose thier foucs
     inputLoginUsername.blur();
     inputLoginPin.blur();
@@ -175,13 +160,14 @@ const requestLone = function (event) {
   if (loanAmount > 0) {
     const canTakeLoan = activeAcount.movements.some(
       mov => mov >= loanAmount * (10 / 100)
-    ); 
+    );
     if (canTakeLoan) {
       activeAcount.movements.push(loanAmount);
       updateUI(activeAcount);
-      inputLoanAmount.value = '';
     }
   }
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
 };
 btnLoan.addEventListener('click', requestLone);
 const closeAccount = function (event) {
@@ -202,6 +188,22 @@ const closeAccount = function (event) {
   }
 };
 btnClose.addEventListener('click', closeAccount);
+let isSorted = false;
+const sortTransActions = function () {
+  if (isSorted === true) {
+    //the array is sorted make it back to orignal state
+    isSorted = false;
+    activeAcount.movements = unsortedMovements;
+    console.log('movements are sorted');
+  } else if (isSorted === false) {
+    //the movements is not sorted Sort Them!
+    isSorted = true;
+    activeAcount.movements = sortedMovements;
+    console.log('movements are not sorted');
+  }
+  updateUI(activeAcount);
+};
+btnSort.addEventListener('click', sortTransActions);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
