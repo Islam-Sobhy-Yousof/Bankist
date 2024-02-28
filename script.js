@@ -170,6 +170,24 @@ const transferMoney = function (event) {
 };
 btnTransfer.addEventListener('click', transferMoney);
 
+const closeAccount = function (event) {
+  event.preventDefault();
+  const activeUser = activeAcount.userName;
+  const activePin = activeAcount.pin;
+  const inputUserName = inputCloseUsername.value;
+  const inputPin = parseInt(inputClosePin.value); 
+  //Empty the fields
+  inputCloseUsername.value = inputClosePin.value = '';
+  if (inputUserName === activeUser && inputPin === activePin) {
+    //find the index of the active account
+    const activeAcountIndx = accounts.findIndex(
+      acc => acc.userName === activeUser
+    );
+    accounts.splice(activeAcountIndx, 1);
+    containerApp.style.opacity = '0';
+  }
+};
+btnClose.addEventListener('click', closeAccount);
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
