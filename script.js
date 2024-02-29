@@ -73,7 +73,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const formate = type => (type < 10 ? `0${type}` : type);
+const formate = type => (`${type}`.padStart(2,'0'));
 const createMovement = function (mov, i, movDate, moveType) {
   const currentMoveDate = new Date(movDate);
   const year = formate(currentMoveDate.getFullYear());
