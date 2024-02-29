@@ -14,12 +14,12 @@ const account1 = {
   movementsDates: [
     '2019-11-18T21:31:17.178Z',
     '2019-12-23T07:42:02.383Z',
-    '2020-01-28T09:15:04.904Z',
+    '2020-02-28T09:15:04.904Z',
     '2020-04-01T10:17:24.185Z',
-    '2020-05-08T14:11:59.604Z',
-    '2020-05-27T17:01:17.194Z',
+    '2024-02-28T14:11:59.604Z',
+    '2024-02-27T17:01:17.194Z',
     '2020-07-11T23:36:17.929Z',
-    '2020-07-12T10:51:36.790Z',
+    '2024-02-29T10:51:36.790Z',
   ],
   currency: 'EUR',
   locale: 'pt-PT', // de-DE
@@ -37,9 +37,9 @@ const account2 = {
     '2019-12-25T06:04:23.907Z',
     '2020-01-25T14:18:46.235Z',
     '2020-02-05T16:33:06.386Z',
-    '2020-04-10T14:43:26.374Z',
-    '2020-06-25T18:49:59.371Z',
-    '2020-07-26T12:01:20.894Z',
+    '2020-05-27T17:01:17.194Z',
+    '2020-07-11T23:36:17.929Z',
+    '2020-07-12T10:51:36.790Z',
   ],
   currency: 'USD',
   locale: 'en-US',
@@ -73,17 +73,32 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const formate = type => (`${type}`.padStart(2,'0'));
+const formate = type => `${type}`.padStart(2, '0');
+const formateDate = function (date) {
+  const year = formate(date.getFullYear());
+  const month = formate(date.getMonth() + 1);
+  const day = formate(date.getDate());
+  const calcDate = (dateOne, dateTwo) =>
+    Math.round(Math.abs(dateTwo - dateOne) / (24 * 60 * 60 * 1000));
+  const daysPassed = calcDate(new Date(), date);
+  if (daysPassed === 0) {
+    return 'Today';
+  } else if (daysPassed === 1) {
+    return 'YesterDay';
+  } else if (daysPassed <= 7) {
+    return `${daysPassed} Days ago`;
+  } else {
+    return `${day}/${month}/${year}`;
+  }
+};
 const createMovement = function (mov, i, movDate, moveType) {
   const currentMoveDate = new Date(movDate);
-  const year = formate(currentMoveDate.getFullYear());
-  const month = formate(currentMoveDate.getMonth());
-  const day = formate(currentMoveDate.getDate());
+  const transActionDate = formateDate(currentMoveDate);
   const move = `<div class="movements__row">
           <div class="movements__type movements__type--${moveType}">${
     i + 1
   } ${moveType}</div>
-          <div class="movements__date">${day}/${month}/${year}</div>
+          <div class="movements__date">${transActionDate}</div>
           <div class="movements__value">${mov.toFixed(2)}€</div>
         </div>`;
   containerMovements.insertAdjacentHTML('afterbegin', move);
