@@ -183,6 +183,26 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
   diplayDate();
 };
+let TimerId = null;
+const timerStarts = function () {
+  const timer = labelTimer.textContent;
+  let minutes = parseInt(timer.slice(0, 2));
+  let seconds = parseInt(timer.slice(3));
+  if (seconds === 0) {
+    if (minutes > 0) {
+      seconds = 60;
+      minutes -= 1;
+    }
+  }
+  seconds -= 1;
+  labelTimer.textContent = `${formate(minutes)}:${formate(seconds)}`;
+  if (minutes === 0 && seconds === 0) {
+    console.log('clearing interval');
+    clearInterval(TimerId);
+    containerApp.style.opacity = '0';
+    labelWelcome.textContent = `Log in to get started!🔑💻`;
+  }
+};
 const login = function (event) {
   event.preventDefault();
   const userName = inputLoginUsername.value;
@@ -191,6 +211,10 @@ const login = function (event) {
     return acc.userName === userName && acc.pin === pin;
   });
   if (account) {
+    //Call the timer
+    clearInterval(TimerId);
+    timerStarts();
+    TimerId = setInterval(timerStarts, 1000);
     //assign this account to active account
     activeAcount = account;
     //make the two fields to lose thier foucs
@@ -202,15 +226,10 @@ const login = function (event) {
     labelWelcome.textContent = `Welcom Back, ${account.owner.split(' ')[0]}🎉`;
   }
 };
-/////////////////////////////////////////
-
-//updating date and time
-const now = new Date();
-
-/////////////////////////////////////////
 btnLogin.addEventListener('click', login);
 const transferMoney = function (event) {
   event.preventDefault();
+  labelTimer.textContent = '05:00';
   const recieverAccount = inputTransferTo.value;
   const moneyAmount = parseInt(inputTransferAmount.value);
   const accountToTransfere = accounts.find(
@@ -237,16 +256,21 @@ const transferMoney = function (event) {
 btnTransfer.addEventListener('click', transferMoney);
 const requestLone = function (event) {
   event.preventDefault();
+  labelTimer.textContent = '05:00';
   const loanAmount = parseInt(inputLoanAmount.value);
   if (loanAmount > 0) {
     const canTakeLoan = activeAcount.movements.some(
       mov => mov >= loanAmount * (10 / 100)
     );
     if (canTakeLoan) {
-      activeAcount.movements.push(loanAmount);
-      const currentDate = new Date().toISOString();
-      activeAcount.movementsDates.push(currentDate);
-      updateUI(activeAcount);
+      //Adding setTimeOut
+      const approveLoan = function () {
+        activeAcount.movements.push(loanAmount);
+        const currentDate = new Date().toISOString();
+        activeAcount.movementsDates.push(currentDate);
+        updateUI(activeAcount);
+      };
+      setTimeout(approveLoan, 2000);
     }
   }
   inputLoanAmount.value = '';
@@ -255,6 +279,7 @@ const requestLone = function (event) {
 btnLoan.addEventListener('click', requestLone);
 const closeAccount = function (event) {
   event.preventDefault();
+  labelTimer.textContent = '05:00';
   const activeUser = activeAcount.userName;
   const activePin = activeAcount.pin;
   const inputUserName = inputCloseUsername.value;
