@@ -201,6 +201,7 @@ const timerStarts = function () {
     clearInterval(TimerId);
     containerApp.style.opacity = '0';
     labelWelcome.textContent = `Log in to get started!🔑💻`;
+    labelTimer.textContent = '05:00';
   }
 };
 const login = function (event) {
@@ -212,6 +213,7 @@ const login = function (event) {
   });
   if (account) {
     //Call the timer
+    labelTimer.textContent = '05:00';
     clearInterval(TimerId);
     timerStarts();
     TimerId = setInterval(timerStarts, 1000);
